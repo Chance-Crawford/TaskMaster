@@ -12,45 +12,171 @@
 
 <body>
 
+  <!-- for more info see google docs, third party apis notes, bootstrap -->
   <div class="row min-vh-100 no-gutters">
-    <header class="col-12 col-lg-3 bg-dark text-light d-flex flex-column p-4 p-lg-3">
+    <header class="sticky-top col-12 col-lg-3 bg-dark text-light d-flex flex-column p-4 p-lg-3">
       <h1 class="text-center">Taskmaster Pro Edition</h1>
       <button id="create-task" class="btn btn-block btn-success" data-toggle="modal" data-target="#task-form-modal">Add
         Task</button>
       <button id="remove-tasks" class="btn btn-block btn-danger">Delete All Tasks</button>
-      <p class="mt-auto">Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi voluptas architecto ipsa
+      <!-- utility classes from bootstrap.
+      mt-auto class was already in place, and it puts all of the unused space in 
+      the <header> element on top of the <p> element instead of keeping it 
+        below. This only works because the <header> is set up as a flexbox column.
+
+        d-none means at the smallest size up, the p element will not display
+        d-lg-block means at screen size "large" and up, the p element will display
+        in a block format.
+      -->
+      <p class="mt-auto d-none d-lg-block">Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi voluptas architecto ipsa
         excepturi aut non
         laudantium sequi fugit officiis optio deleniti asperiores rem eius laborum maxime blanditiis culpa, quis iste?
       </p>
     </header>
-    <main class="col-12 col-lg-9">
-      <div class="m-5">
-        <h2>To Do</h2>
-        <ul id="list-toDo" class="list-group"> </ul>
+    <!-- for more info see google docs, third party apis notes, bootstrap -->
+    <!-- makes the main content display flex and in a column so that the
+    tasks will be at the top and the delete zone will be at the bottom. once
+    we give the delete zone a class of mt-auto.
+    -->
+    <main class="col-12 col-lg-9 d-flex flex-column">
+      
+      <!-- row is a bootstrap style, creates a FLEXBOX parent to hold columns-->
+      <!-- in a 12 spaces grid layout -->
+      <div class="m-5 row justify-content-around">
+
+        <!-- to do column -->
+        <!-- mb-3 means margin bottom 3 -->
+        <div class="col-12 col-md-6 col-xl-3 mb-3">
+          <div class="card">
+            <!-- 
+              we need a class to change the look of the header from bootstrap
+              then other classes from bootstrap to change the bg color to dark
+              in the header, and the text to light.
+
+              we just need to use Bootstrap's color utility classes for bg and 
+              text color. Take a moment to review the documentation and 
+              see which classes we'll need to add.
+             -->
+            <h4 class="card-header bg-dark text-light">To Do</h4>
+            <ul id="list-toDo" class="list-group"> </ul>
+          </div>
+        </div>
+        
+        <!-- In progress column -->
+        <div class="col-12 col-md-6 col-xl-3 mb-3">
+          <div class="card">
+            <h4 class="card-header bg-dark text-light">In Progress</h4>
+            <ul id="list-inProgress" class="list-group">
+              <li class="list-group-item">
+                <span class="badge badge-primary badge-pill">05/28/2020</span>
+                <p class="m-1">Sample task in progress</p>
+              </li>
+            </ul>
+          </div>
+          
+        </div>
+
+        <!-- in review column -->
+        <div class="col-12 col-md-6 col-xl-3 mb-3">
+          <div class="card">
+            <h4 class="card-header bg-dark text-light">In Review</h4>
+            <ul id="list-inReview" class="list-group">
+              <li class="list-group-item">
+                <span class="badge badge-primary badge-pill">05/28/2020</span>
+                <p class="m-1">Sample task in review</p>
+              </li>
+            </ul>
+          </div>
+          
+        </div>
+        
+
+        <!-- done column -->
+        <div class="col-12 col-md-6 col-xl-3 mb-3">
+          <div class="card">
+            <h4 class="card-header bg-dark text-light">Done</h4>
+            <ul id="list-done" class="list-group">
+              <li class="list-group-item">
+                <span class="badge badge-primary badge-pill">05/28/2020</span>
+                <p class="m-1">Sample task that's done</p>
+              </li>
+            </ul>
+          </div>
+          
+        </div>
+
       </div>
+
+      <!-- delete zone -->
+      <!-- mt-auto takes all the unused space beneath the delete zone
+        and brings the space to the top.
+      -->
+      <div id="trash" class="mt-auto">
+        
+        <div class="w-100 bg-danger p-3 text-center text-light display-4">
+          Drop Here to Remove.
+        </div>
+      </div>
+
+
     </main>
   </div>
 
   <!-- Modal -->
+  <!-- 
+    Bootstrap relies on jQuery and another library, called Popper, for some of 
+    its features, like opening a modal. That's why at the bottom of the 
+    index.html file, the Bootstrap CDN's JavaScript file loads after the others. 
+    It requires them to load before it loads its own code.
+
+    The most important thing to know is how to trigger a modal to open with a 
+    button. In our code, the HTML towards the bottom of the file for the modal 
+    has an id attribute set to task-form-modal. And the button that we can click 
+    to open the modal has a custom data attribute called data-target set to 
+    #task-form-modal.
+
+    Bootstrap uses a custom data attribute to connect a button to the modal 
+    that it opens. If the value of the id for the modal changes, then the 
+    data-trigger attribute for the button needs to match it in order to work.
+
+    The button which triggers the model is near the top of the page.
+
+    We wouldn't know how to use components like these without the 
+    documentation. That's why it is vital to read through documentation whenever 
+    possible!
+   -->
   <div class="modal fade" id="task-form-modal" tabindex="-1" role="dialog" aria-labelledby="task-form-modal"
     aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered" role="document">
+
       <div class="modal-content">
         <div class="modal-header">
+
           <h5 class="modal-title" id="task-form-modal">Add New Task</h5>
+
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
+
         </div>
         <div class="modal-body">
           <form>
             <div class="form-group">
               <label for="modalTaskDescription">Task description</label>
-              <textarea id="modalTaskDescription" rows="3"></textarea>
+              <!-- form-control is a class from bootstrap that changes the appearance
+                  of forms, and in this case we are changing the appearance of 
+                  the inputs within the form, inside the
+                  modal.
+
+                  Just study the documentation when you 
+                  want to add something new and adjust the code until it fits your needs.
+              -->
+              <textarea id="modalTaskDescription" rows="3" class="form-control"></textarea>
             </div>
             <div class="form-group">
               <label for="modalDueDate">Due date</label>
-              <input type="text" id="modalDueDate" placeholder="mm/dd/yyyy" autocomplete="off" />
+              <input type="text" class="form-control" id="modalDueDate" placeholder="mm/dd/yyyy" autocomplete="off" />
             </div>
           </form>
         </div>
