@@ -5,10 +5,99 @@
 // those arrays will house all TASK OBJECTS based on their status.
 var tasks = {};
 
+
+// When we create a task or edit its due date, we want to be able to 
+// see if that date is either in the past or within two days from now. 
+// If it's in the past, we'll add a red background to the task item to let 
+// the user know it's overdue. If it's within the next two days, we'll add a 
+// yellow background to it. 
+
+// Because we need to run this type of functionality in the functions for 
+// both creating tasks and editing task due dates, we should create a separate 
+// function for it, called auditTask, and set it up to accept the task's 
+// <li> element as a parameter. This way we can add classes to it if need be. 
+
+// since the tasks are saved and recreated whenever the page is reloaded,
+// the tasks will pass through the createTask() function on reload,
+// which also means they will pass through this function, since this function is 
+// called within createTasks(). So on reload, the color of the background of the
+// tasks will change based on their new status, overdue, near due date, or normal.
+
+// Edit: we also triggered this event to occur whenever the span element is changed
+// in a the $(".list-group").on("change", "input[type='text']", function()
+// further below, so a reload is no longer required.
+// this function runs and checks the date of a task whenever the task is created
+// and whenever the date on the task is changed.
+var auditTask = function(taskEl) {
+  // Now that we know we're getting the li element into auditTask() when it is being 
+  // created, we need to check what date was added to its <span> element. 
+  // This will involve two actions. First, we need to use jQuery to 
+  // retrieve the date stored in that <span> element. Second, we 
+  // need to use the moment() function to convert that date value 
+  // into a Moment object.
+
+  // get date from task element span
+  // gets text content from span which is the date, then trims any whitespace
+  // from the front or back if it is there.
+  var date = $(taskEl).find("span").text().trim();
+
+  // convert to moment object at 5:00pm
+
+  // First, we use the date variable we created from taskEl 
+  // to make a new Moment object, configured for the user's local time 
+  // using moment(date, "L"). Because the date variable does not specify a 
+  // time of day (for example, "11/23/2019"), the Moment object will default 
+  // to 12:00am. Because work usually doesn't end at 12:00am, we convert it to 
+  // 5:00pm of that day instead, using the .set("hour", 17) method. 
+  // In this case, the value 17 is in 24-hour time, so it's 5:00pm.
+  var time = moment(date, "L").set("hour", 17);
+
+  // remove any old classes from element
+  // First we utilize the jQuery .removeClass() method to remove any of 
+  // these classes if they were already in place. This way, if we update 
+  // the due date from yesterday to a week from now, that red background 
+  // will be removed, as it will no longer be overdue.
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+  // apply new class if task is near/over due date
+  // moment() returns the current date and time of the user. 
+  // .isAfter(time) compares the current time, to the time specified in the
+  // variable "time", and asks if that time is after the current time.
+  // this code will run if the current date has overlapped the due date of
+  // the task. Meaning they missed the tasks due date, the background of the task
+  // will become red. The class we use to turn it red is from bootstrap.
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+  }
+
+  // Now that we've handled how to check overdue dates, 
+  // let's identify upcoming dates.
+
+  // Let's dive into the condition for the else if statement. 
+  // These Moment.js functions literally perform left to right. So when 
+  // we use moment() to get the current time of the user  
+  // and use .diff() afterwards to get the 
+  // difference in days of current time to the time of the due date in the future. 
+  // When we get this difference, we will get a negative number back. 
+  // This can be hard to work with, because we have to check 
+  // if the difference is >= -2, which can be hard to conceptualize.
+  // Instead we turn it to a positive by wrapping the returning value 
+  // of the moment.diff() in the JavaScript Math object's .abs() method
+  // to get the absolute value.
+
+  // This says, if the due date of the task is 2 days away or closer,
+  // turn the background of the task yellow.
+  else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
+
+};
+
+
 var createTask = function(taskText, taskDate, taskList) {
   // create new elements that make up a task item
   // to create an element you use brackets <li>. to select an existing element
-  // yo dont use brackets li.
+  // you dont use brackets li.
   var taskLi = $("<li>").addClass("list-group-item");
 
   // jQuery methods can be chained together like this
@@ -23,6 +112,8 @@ var createTask = function(taskText, taskDate, taskList) {
   // append span and p element to new li parent
   taskLi.append(taskSpan, taskP);
 
+  //check due date of new li element, function above this one
+  auditTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
@@ -177,35 +268,75 @@ $(".list-group").on("blur", "textarea", function() {
 // above has more comments so see those.
 // due date was clicked
 $(".list-group").on("click", "span", function() {
-  // get current text
+  // get current text of span
   var date = $(this)
     .text()
     .trim();
 
   // create new input element
   var dateInput = $("<input>")
-  // In jQuery, attr() can serve two purposes. With one argument, 
-  // it gets an attribute (e.g., attr("id")). With two arguments, 
-  // it sets an attribute (e.g., attr("type", "text")). 
+    // In jQuery, attr() can serve two purposes. With one argument, 
+    // it gets an attribute (e.g., attr("id")). With two arguments, 
+    // it sets an attribute (e.g., attr("type", "text")). 
     .attr("type", "text")
+    // readonly=true is so that user can not write anything in datepicker.
+    // if the user can write random numbers or a date in the wrong format, it messes
+    // up the datepicker. So dont allow user to type, but the datepicker in
+    // with jQuery UI can still edit the contents
+    .attr("readonly", "true")
     .addClass("form-control")
+    // set value inside the input box to the date var above
     .val(date);
 
-  // swap out elements
+  // swap out elements. swap span for new created input box
   $(this).replaceWith(dateInput);
 
   // automatically focus on new element
   dateInput.trigger("focus");
 
+  // enable jquery ui datepicker on the input box
+  // NOTE: more info below where we turn the input on the modal ("#modalDueDate")
+  // into a datepicker as well.
+  dateInput.datepicker({
+    minDate: 0,
+    // the onClose option for .datepicker() allows us to execute a function 
+    // when the date picker closes. It may close when a user clicks anywhere 
+    // on the page outside the date picker, so we need to capture that event and 
+    // change the date picker back to its original <span> element.
+    onClose: function() {
+      // when calendar is closed, force a "change" event on the `dateInput`
+      // the "change" event is defined below, it basically changes the 
+      // input box back into a psan element.
+      $(this).trigger("change");
+    }
+  });
+
+  // automatically bring up the calendar after user clicks.
+  dateInput.trigger("focus");
+
   // see below for saving process
+
 });
 
 
-// same as above listeners, only this time with due dates
+// same as above listeners, only this time with due dates.
 // above has more comments so see those.
-// value of due date was changed
-// selecting child <input> of ul with attribute selector.
-$(".list-group").on("blur", "input[type='text']", function() {
+// selecting child <input> of ul with attribute selector input[type='text'].
+
+// value of due date was changed.
+// we use change instead of blur this time because we are using a datepicker 
+// for the input element of the date. 
+
+// blur enacts whenever the input box is clicked out of, but change enacts
+// whenever the input is changed, in this case, we use datepicker to change
+// the value of the input.
+
+// with blur the date picker closed without collecting the date 
+// information we selected.
+// Instead we are going to listen for a change within the input, the datepicker
+// is the only thing that enacts change within the input box.
+
+$(".list-group").on("change", "input[type='text']", function() {
   // get current text inside input
   var date = $(this)
     .val()
@@ -236,7 +367,14 @@ $(".list-group").on("blur", "input[type='text']", function() {
     .text(date);
 
   // replace input with span element
+  // this will also close the datepicker
   $(this).replaceWith(taskSpan);
+
+  // Pass task's <li> element into auditTask() to check new due date
+  // and change the background color to red or yellow if needed.
+  // since audit task only accepts a task object (li), we are finding the
+  // spans parent li and passing it into the function.
+  auditTask($(taskSpan).closest(".list-group-item"));
 });
 
 
@@ -396,6 +534,7 @@ $("#trash").droppable({
 
 
 
+
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
   // clear values
@@ -429,6 +568,29 @@ $("#task-form-modal .btn-primary").click(function() {
     saveTasks();
   }
 });
+
+
+// selecting the input box in the modal, and turning
+// it into a datepicker widget using a jQuery UI method
+$("#modalDueDate").datepicker({
+  // we passed an object into the .datepicker() method and set 
+  // key-value pairs of the options we'd like to use. This is the syntax for
+  // changing options in jQuery UI methods.
+
+  // We used a value of 1 for the minDate option to indicate how many 
+  // days after the current date we want the limit to kick in. 
+  // In other words, we've set the minimum date to be today, all dates before today
+  // are grayed out.
+
+  // Now if we try to select a date in the modal's form, any days from the 
+  // current date or prior are grayed out to inform the user what they can or 
+  // can't select. We could implement a lot of other options; some deal with 
+  // the overall UI of the date picker while others deal with the 
+  // behind-the-scenes logic.
+  minDate: 0
+});
+
+
 
 // remove all tasks
 $("#remove-tasks").on("click", function() {

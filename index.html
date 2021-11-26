@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css"></link>
   <link rel="stylesheet" href="./assets/css/style.css" />
   <title>Taskmaster Pro</title>
 </head>
@@ -168,7 +168,13 @@
             </div>
             <div class="form-group">
               <label for="modalDueDate">Due date</label>
-              <input type="text" class="form-control" id="modalDueDate" placeholder="mm/dd/yyyy" autocomplete="off" />
+              <!-- we will turn this into a datepicker using jQuery UI -->
+              <!-- readonly=true is so that user can not write anything in datepicker.
+              if the user can write random numbers or a date in the wrong format, it messes
+              up the datepicker. So dont allow user to type, but the datepicker in
+              with jQuery UI can still edit the contents
+              -->
+              <input type="text" readonly="true" class="form-control" id="modalDueDate" placeholder="mm/dd/yyyy" autocomplete="off" />
             </div>
           </form>
         </div>
@@ -190,6 +196,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
   <!-- bootstrap script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!-- moment.js script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <script src="./assets/js/script.js"></script>
   
