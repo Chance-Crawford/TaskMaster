@@ -119,6 +119,8 @@ var createTask = function(taskText, taskDate, taskList) {
   $("#list-" + taskList).append(taskLi);
 };
 
+
+
 // reloads all tasks from localStorage and
 // puts them back on the screen
 var loadTasks = function() {
@@ -145,9 +147,40 @@ var loadTasks = function() {
   });
 };
 
+
+
 var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
+
+
+// The client has a feeling that users might tend to leave the app open 
+// in a browser window for days at a time. If the user doesn't refresh the 
+// page, then existing tasks won't be audited and a due date can creep 
+// up on them without their knowledge.
+// A better user experience would be to periodically check the due dates so 
+// the user doesn't need to remember to refresh the page. To 
+// do this, we'll automate the logic in the auditTask() function to run 
+// every 30 minutes. Luckily, the browser has tools to achieve just this, 
+// called timers.
+// setInterval's time parameter is counted in milliseconds, thats why
+// its so large.
+
+// Here, the jQuery selector passes each element it finds using the selector 
+// into the callback function, the element we are looking for is each
+// li element (list-group-item) within the ul columns (card), 
+// and that element is expressed in the el argument of the function. 
+// auditTask() then passes the li element to its routines using the el argument.
+// wherew it checks to see the status of the due date and whether or not
+// the background color should change
+// In this interval, we loop over every task on the page with a class of 
+// list-group-item and execute the auditTask() function to check the due 
+// date of each one.
+setInterval(function () {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, 1800000);
 
 
 
@@ -183,6 +216,8 @@ $(".list-group").on("click", "p", function() {
 
   // function to save it is below
 });
+
+
 
 // saves what the user put in the textarea from function
 // above.
@@ -262,6 +297,7 @@ $(".list-group").on("blur", "textarea", function() {
 
 
 });
+
 
 
 // same as above listeners, only this time with due dates
@@ -388,6 +424,9 @@ $(".card .list-group").sortable({
   // we are allowing the list to connect with
   // any other ul list. This means any items in one list can be sorted into another
   // sortable ul list-group list, since they are connected.
+
+  // and it makes it to where all of the below options apply to all the
+  // ul at the same time, since they are all connected.
   connectWith: $(".card .list-group"),
   // we are now adding several event listeners based on the state
   // of sorting or dragging.
@@ -403,18 +442,34 @@ $(".card .list-group").sortable({
   // the color of elements at each step to let the user know dragging is 
   // working correctly.
   activate: function(event) {
-    console.log("activate", this);
+    // when user is currently dragging the li, make all the
+    // ul light gray so that the user knows they can drop the li
+    // in those other lists.
+    $(this).addClass("dropover");
+    // selects the bottom delete zone trash element whenever an li is 
+    // being dragged and adds
+    // a class to it which causes it to slide up asnd become visible.
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
   deactivate: function(event) {
-    console.log("deactivate", this);
+    // when user lets go of li, remove light gray tint from all the <ul>'s.
+    $(this).removeClass("dropover");
+    // when user lets go, remove the class and the trash
+    // slides back down.
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   // The over and out events trigger when a dragged item enters or 
   // leaves a connected list.
   over: function(event) {
-    console.log("over", event.target);
+    // method over triggers whenever an li is currently over a ul.
+    // we want to get the event.target when the over is triggered, which will 
+    // be the ul that was just hovered over. Get the event.target and make the 
+    // background black to give feedback to user that they can drop li.
+    $(event.target).addClass("dropover-active");
   },
   out: function(event) {
-    console.log("out", event.target);
+    // same as over but opposite.
+    $(event.target).removeClass("dropover-active");
   },
   // The update event triggers when the contents of a list have 
   // changed (e.g., the items were re-ordered, an item was removed, or an 
@@ -522,13 +577,17 @@ $("#trash").droppable({
     // within the function meaning the sortable calls 
     // saveTasks() for us.
     ui.draggable.remove();
+    // see sortable function above for activate and deactivate
+    $(".bottom-trash").removeClass("bottom-trash-active");
   },
   // defined in above function.
   over: function(event, ui) {
-    console.log("over");
+    // see sortable function above for activate and deactivate
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui) {
-    console.log("out");
+    // see sortable function above for activate and deactivate
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
@@ -548,7 +607,7 @@ $("#task-form-modal").on("shown.bs.modal", function() {
 });
 
 // save button in modal was clicked
-$("#task-form-modal .btn-primary").click(function() {
+$("#task-form-modal .btn-save").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();

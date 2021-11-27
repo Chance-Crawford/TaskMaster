@@ -5,8 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- bootstrap stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- jQuery UI themes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css"></link>
+  <!-- google fonts import link -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Staatliches&display=swap" rel="stylesheet">
+  <!-- open iconic paired with bootstrap link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />
   <link rel="stylesheet" href="./assets/css/style.css" />
   <title>Taskmaster Pro</title>
 </head>
@@ -16,10 +22,23 @@
   <!-- for more info see google docs, third party apis notes, bootstrap -->
   <div class="row min-vh-100 no-gutters">
     <header class="sticky-top col-12 col-lg-3 bg-dark text-light d-flex flex-column p-4 p-lg-3">
-      <h1 class="text-center">Taskmaster Pro Edition</h1>
-      <button id="create-task" class="btn btn-block btn-success" data-toggle="modal" data-target="#task-form-modal">Add
-        Task</button>
-      <button id="remove-tasks" class="btn btn-block btn-danger">Delete All Tasks</button>
+      <!-- 
+        There is one last thing to do, and then we'll be all set with our web icons! 
+        In that long list of Bootstrap classes added to the <span> element, we're 
+          instructing it to not display at all when the screen gets smaller. This is 
+          good—we don't want the <header> to take up too much space on smaller devices, 
+          but the client still wants to see it somewhere on mobile.
+          
+          Let's add this icon once more next to the application's name in the top 
+          of <header> so it looks like this:
+       -->
+      <h1 class="text-center"><span class="oi oi-task d-inline d-lg-none mr-1"></span>Taskmaster Pro Edition</h1>
+      <button id="create-task" class="btn-add btn btn-block" data-toggle="modal" data-target="#task-form-modal">
+        <!-- span is from open iconic. adds a plus icon right before "add task" text. -->
+        <!-- mr-2 is margin right 2 for bootstrap. -->
+        <span class="oi oi-plus mr-2"></span>Add Task
+      </button>
+      <button id="remove-tasks" class="btn-delete btn btn-block"><span class="oi oi-trash mr-2"></span>Delete All Tasks</button>
       <!-- utility classes from bootstrap.
       mt-auto class was already in place, and it puts all of the unused space in 
       the <header> element on top of the <p> element instead of keeping it 
@@ -29,7 +48,11 @@
         d-lg-block means at screen size "large" and up, the p element will display
         in a block format.
       -->
-      <p class="mt-auto d-none d-lg-block">Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi voluptas architecto ipsa
+      <!-- open iconic, adding onto the first 2 classes to make the checkbox 
+      appear larger and further down.
+      -->
+      <span class="oi oi-task display-1 text-center mb-2 d-none d-lg-block mt-auto"></span>
+      <p class="d-none d-lg-block">Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi voluptas architecto ipsa
         excepturi aut non
         laudantium sequi fugit officiis optio deleniti asperiores rem eius laborum maxime blanditiis culpa, quis iste?
       </p>
@@ -103,10 +126,17 @@
       <!-- mt-auto takes all the unused space beneath the delete zone
         and brings the space to the top.
       -->
-      <div id="trash" class="mt-auto">
+      <!-- overflow hidden makes it so that when the trash zone is lowered
+      at the bottom of the screen, the page does not just have excess whitespace at
+      the bottom, but that overflow is hidden. Take away class to see what that means.
+      -->
+      <div id="trash" class="mt-auto overflow-hidden">
         
-        <div class="w-100 bg-danger p-3 text-center text-light display-4">
-          Drop Here to Remove.
+        <div class="bottom-trash w-100 p-3 text-center">
+          <!-- open iconic trash can, described in google docs Third party apis 
+          open iconic
+          -->
+          <span class="oi oi-trash mr-2 mx-auto mb-4"></span>Drop Here to Remove.
         </div>
       </div>
 
@@ -179,8 +209,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save Task</button>
+          <button type="button" class="btn btn-close" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-save">Save Task</button>
         </div>
       </div>
     </div>

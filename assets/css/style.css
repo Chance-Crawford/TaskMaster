@@ -1,3 +1,104 @@
+
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Staatliches", sans-serif;
+}
+
 ul.list-group {
   min-height: 130px;
+}
+
+/* when user is dragging tasks, these classes
+give visual feedback on where the user can drop the task
+*/
+.dropover {
+  background: rgba(0,0,0,0.3);
+
+}
+
+.dropover-active {
+  background: rgba(0,0,0,0.65);
+}
+
+/* bottom delete zone */
+.bottom-trash {
+  opacity: 0;
+  color: #f1f1f1;
+  font-size: 2.3rem;
+  font-family: "Staatliches", sans-serif;
+  /* move the dropzone down 150px */
+  transform: translateY(150px);
+  /* Whenever there is a change in property values implemented on the element,
+  such as in this case we add the below classes with jQuery in the script which change
+  the opacity, and y position, and bg color.
+  The transition dictates how long those changes will take, and how those changes will
+  happen. Will the changes fade in? etc.
+
+  apply to all elements within the trash div element 
+  (do transition to the whole element.
+  for example, not just the span, but the div too.)
+  have the changes in the properties take place for .5 seconds, ease in and out.
+  This is in reference to the color changing and the transform position changing
+  between this class and the classes below below.
+  */
+  transition: all .5s ease-in-out;
+  background-color: rgba(234,0,39,0.7);
+}
+
+/* will be added to the trash dropzone element 
+when a task is dragged, which will move the element back into view. 
+*/
+.bottom-trash-drag {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Lastly, the bottom-trash-active class will be applied when a task item is dragged 
+over the trash dropzone.
+ */
+.bottom-trash-active {
+  background-color: rgba(234,0,39,1);
+}
+
+
+
+
+/* making buttons look good on the screen in left column and in modal */
+
+.btn-add,
+.btn-save {
+  background-color: #FA8BFF;
+  background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
+  /* this transition occurs whenever the properties change.
+  in this case instead of changing the classes with jquery, we enact the property
+  changes in the elment's hover state.
+  take off this transition property to see what i mean.
+  */
+  transition: all .5s ease-out;
+  background-size: 1px 100px;
+  background-position: 0 -10px;
+}
+
+.btn-close,
+.btn-delete {
+  background-color: #EA0028;
+  background-image: linear-gradient(180deg, #FF9A8B 0%, #EA0028 100%);
+  transition: all .5s ease-out;
+  background-size: 1px 100px;
+  background-position: 0 -10px;
+}
+
+.btn-add:hover,
+.btn-save:hover,
+.btn-close:hover,
+.btn-delete:hover {
+  background-position: 1px -50px;
 }
