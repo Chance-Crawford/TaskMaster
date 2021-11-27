@@ -76,6 +76,8 @@ over the trash dropzone.
 .btn-add,
 .btn-save {
   background-color: #FA8BFF;
+  /* We set the background to have a gradient, and if the browser doesn't support it, 
+  the color will fall back to whatever background-color is using. */
   background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
   /* this transition occurs whenever the properties change.
   in this case instead of changing the classes with jquery, we enact the property
@@ -83,7 +85,13 @@ over the trash dropzone.
   take off this transition property to see what i mean.
   */
   transition: all .5s ease-out;
+  /* We also used the background-size property to make that gradient 
+  a lot taller (100px) than the actual button height (38px), so that's why we 
+  don't see the purple-ish color (#FA8BFF) from the gradient on load.
+   */
   background-size: 1px 100px;
+  /* We then set the background-position to move from -10px to 
+  -50px on hover, effectively moving the colored background up and down. */
   background-position: 0 -10px;
 }
 
